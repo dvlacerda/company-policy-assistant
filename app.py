@@ -108,7 +108,7 @@ with tab_ask:
                     pin, pout = pc.PRICES.get(a.model, (0, 0))
                     cost = (a.input_tokens * pin + a.output_tokens * pout) / 1e6
                     st.caption(f"{a.input_tokens:,} in / {a.output_tokens:,} out · {a.model} · "
-                               f"≈ ${cost:.5f} at paid-tier prices (free tier: $0)"
+                               f"≈ \\${cost:.5f} at paid-tier prices (free tier: \\$0)"
                                + (" · +1 embedding call" if m == "rag" else ""))
                 st.info(support_check(a, q))
                 if a.retrieved:
