@@ -1,0 +1,31 @@
+id,question,expected_policy,type,note
+1,How many vacation days do I get each year?,Vacation Policy,answerable,15 days
+2,Can I work from Spain for a few weeks?,Work From Abroad Policy,answerable,up to 30 days with approval
+3,How long is maternity leave?,Parental Leave Policy,answerable,up to 12 weeks paid
+4,How often do I have to change my password?,Password Policy,answerable,every 90 days
+5,My grandmother passed away. How much time off can I take?,Bereavement Leave Policy,answerable,up to 5 days
+6,Do I need permission before buying a $700 monitor for work?,Expense Approval Policy,answerable,over $500 needs Finance approval
+7,How soon after a business trip must I hand in my receipts?,Travel Reimbursement Policy,answerable,within 30 days
+8,Can I post details about our clients on LinkedIn?,Social Media Policy,answerable,no confidential information
+9,Is there a trial period when I start?,Probation Period Policy,answerable,90 days
+10,Can I install Spotify on my work laptop?,Software Installation Policy,answerable,only approved software
+11,How many days a week can I work from home?,Remote Work Policy,answerable,up to three days with approval
+12,A journalist called me about the company. Can I answer?,Media Contact Policy,answerable,only authorised employees
+13,My computer stopped working. What should I do?,Helpdesk Ticket Policy,answerable,submit a helpdesk ticket
+14,Can I send a client a bottle of wine for Christmas?,Client Gift Policy,answerable,must comply with guidelines
+15,Do I have to use a VPN when connecting from home?,Remote Access Policy,answerable,secure VPN required
+16,I clicked on a suspicious link in an email. What now?,Security Incident Policy,answerable,report immediately
+17,What should I wear to the office?,Dress Code Policy,answerable,business casual
+18,Can I lend my access badge to a colleague who forgot theirs?,Office Access Policy,answerable,badges must not be shared
+19,Can I start work later and finish later some days?,Flexible Hours Policy,answerable,with manager approval
+20,Will the company pay for a course I want to take?,Training Reimbursement Policy|Tuition Assistance Policy,answerable,approved training / programmes
+21,How many unused vacation days can I carry over to next year?,Vacation Policy,partly answerable,policy says days may roll over but gives no limit
+22,How many sick days do I get per year?,Sick Leave Policy,partly answerable,accrues monthly; no number given
+23,Is parental leave paid at my full salary?,Parental Leave Policy,partly answerable,paid but rate not specified
+24,What is the exact deadline for submitting the budget?,Budget Planning Policy,partly answerable,by Q4; no exact date
+25,What is the daily meal allowance when I travel?,NONE,unanswerable,no per-diem policy
+26,Can I bring my dog to the office?,NONE,unanswerable,no pet policy
+27,Does the company match pension contributions?,NONE,unanswerable,no pension policy
+28,Is there a free gym membership for employees?,NONE,unanswerable,no gym/benefits policy
+29,Can I smoke on the company balcony?,NONE,unanswerable,no smoking policy
+30,How much notice do I have to give if I resign?,NONE,unanswerable,no notice-period policy

@@ -1,0 +1,5 @@
+streamlit==1.66.1
+pandas>=2.0
+numpy>=1.26
+google-genai>=1.0
+slack_bolt>=1.18
