@@ -128,15 +128,18 @@ with tab_bench:
             "Correct on answerable (20)": df[df.type == "answerable"].groupby("method").policy_correct.mean().map("{:.0%}".format),
             "Abstained on unanswerable (6)": (1 - df[df.type == "unanswerable"].groupby("method").answered_unanswerable.mean()).map("{:.0%}".format),
             "Unsupported answers (reviewed)": g.unsupported.mean().map(lambda v: "—" if pd.isna(v) else f"{v:.0%}"),
+            "Median response time (s)": g.seconds.median().round(2),
             "Mean response time (s)": g.seconds.mean().round(2),
             "Mean tokens per question": g.tokens.mean().round(0).astype(int),
         }).reindex(["rules", "llm", "rag"]).rename(index=LABEL)
         st.dataframe(summary, width="stretch")
         st.caption("'Unsupported' = the answer states something no policy says (e.g. an invented limit or "
-                   "rate), or answers a question the database does not cover. Each answer was reviewed "
-                   "against the policy text.")
+                   "rate) or answers with an unrelated policy. Each of the 90 answers was reviewed against "
+                   "the policy text (see review_note). Mean times include free-tier retries after 503/429 "
+                   "errors, so the median is the typical time. Free-tier model: gemini-3.1-flash-lite.")
         st.dataframe(df[["id", "type", "question", "method", "returned_policy", "policy_correct",
-                         "unsupported", "answer", "seconds", "tokens"]], width="stretch", hide_index=True)
+                         "unsupported", "review_note", "answer", "seconds", "tokens"]], width="stretch",
+                     hide_index=True)
 
 with tab_db:
     st.dataframe(pd.DataFrame(policies), width="stretch", hide_index=True)

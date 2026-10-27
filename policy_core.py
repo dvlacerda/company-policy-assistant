@@ -58,6 +58,23 @@ def load_policies(path=POLICY_CSV):
         return list(csv.DictReader(fh))
 
 
+def canonical_policy(raw, policies):
+    """Map the model's 'policy' field to exact policy titles.
+
+    The models often echo the title with its category ("Vacation Policy (Human Resources)") or
+    name two policies; this returns the known titles found in the text, joined by " | ",
+    or NONE. Unknown text is returned unchanged so it shows up as a mismatch."""
+    raw = (raw or "").strip()
+    if not raw or raw.upper().startswith(NO_POLICY):
+        return NO_POLICY
+    found = []
+    for t in sorted({p["title"] for p in policies}, key=len, reverse=True):
+        i = raw.lower().find(t.lower())
+        if i >= 0 and not any(t.lower() in f.lower() for _, f in found):
+            found.append((i, t))
+    return " | ".join(t for _, t in sorted(found)) if found else raw
+
+
 def policy_line(p):
     return f"- {p['title']} ({p['category']}): {p['policy_text']}"
 
@@ -166,7 +183,7 @@ def llm_full(question, policies, client, models=None):
     prompt = f"{ANSWER_RULES}\n\nCompany policies ({len(policies)}):\n" + \
              "\n".join(policy_line(p) for p in policies) + f"\n\nEmployee question: {question}"
     data, model, tin, tout = generate(client, prompt, models)
-    return Answer("llm", data.get("answer", ""), data.get("policy", NO_POLICY) or NO_POLICY,
+    return Answer("llm", data.get("answer", ""), canonical_policy(data.get("policy"), policies),
                   time.perf_counter() - t0, tin, tout, 0, model)
 
 
@@ -205,7 +222,7 @@ def llm_rag(question, policies, index, client, models=None, k=TOP_K):
     prompt = f"{ANSWER_RULES}\n\nMost relevant company policies:\n" + \
              "\n".join(policy_line(p) for p in chosen) + f"\n\nEmployee question: {question}"
     data, model, tin, tout = generate(client, prompt, models)
-    return Answer("rag", data.get("answer", ""), data.get("policy", NO_POLICY) or NO_POLICY,
+    return Answer("rag", data.get("answer", ""), canonical_policy(data.get("policy"), policies),
                   time.perf_counter() - t0, tin, tout, 1, model,
                   retrieved=[{"title": titles[i], "score": round(float(sims[i]), 3)} for i in top])
 

@@ -1,6 +1,6 @@
 """Run the 30 benchmark questions through all three methods.
 
-Usage: GEMINI_API_KEY=... python benchmark.py
+Usage: GEMINI_API_KEY=... python benchmark.py      (or: python benchmark.py --rescore)
 Writes data/benchmark_results.csv (one row per question x method) and prints a summary.
 
 Scoring
@@ -23,6 +23,37 @@ def numbers(text):
     return set(re.findall(r"\d+(?:\.\d+)?", text or ""))
 
 
+def is_correct(got, expected):
+    """Correct when every policy returned is one of the expected ones (NONE for unanswerable)."""
+    returned = [g.strip() for g in got.split("|") if g.strip()]
+    return bool(returned) and all(g in expected for g in returned)
+
+
+def rescore():
+    """Re-apply canonical policy names and scoring to saved results (no API calls)."""
+    policies = pc.load_policies()
+    path = pc.HERE / "data" / "benchmark_results.csv"
+    rows = list(csv.DictReader(open(path, encoding="utf-8")))
+    for r in rows:
+        if r["method"] != "rules":
+            r["returned_policy"] = pc.canonical_policy(r["returned_policy"], policies)
+        r["policy_correct"] = int(is_correct(r["returned_policy"], r["expected_policy"].split("|")))
+        r["answered_unanswerable"] = int(r["type"] == "unanswerable" and r["returned_policy"] != "NONE")
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(rows[0]))
+        w.writeheader()
+        w.writerows(rows)
+    summary(rows)
+
+
+def summary(rows):
+    for m in ("rules", "llm", "rag"):
+        r = [x for x in rows if x["method"] == m]
+        print(m, "policy correct", sum(int(x["policy_correct"]) for x in r), "/", len(r),
+              "| mean s", round(sum(float(x["seconds"]) for x in r) / len(r), 2),
+              "| mean tokens", round(sum(int(x["input_tokens"] or 0) + int(x["output_tokens"] or 0) for x in r) / len(r)))
+
+
 def main():
     key = pc.api_key_from_env()
     if not key:
@@ -41,7 +72,7 @@ def main():
                          ("rag", lambda s: pc.llm_rag(s, policies, index, client))):
             a = fn(q["question"])
             got = a.policy.strip()
-            correct = got in expected or (expected == ["NONE"] and got.upper() == "NONE")
+            correct = is_correct(got, expected)
             rows.append({
                 "id": q["id"], "type": q["type"], "question": q["question"], "method": name,
                 "expected_policy": q["expected_policy"], "returned_policy": got,
@@ -59,12 +90,9 @@ def main():
         w = csv.DictWriter(fh, fieldnames=list(rows[0]))
         w.writeheader()
         w.writerows(rows)
-    for m in ("rules", "llm", "rag"):
-        r = [x for x in rows if x["method"] == m]
-        print(m, "policy correct", sum(x["policy_correct"] for x in r), "/", len(r),
-              "| mean s", round(sum(x["seconds"] for x in r) / len(r), 2),
-              "| mean tokens", round(sum(x["input_tokens"] + x["output_tokens"] for x in r) / len(r)))
+    summary(rows)
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    rescore() if "--rescore" in sys.argv else main()
