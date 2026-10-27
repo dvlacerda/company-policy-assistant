@@ -27,14 +27,14 @@ HERE = Path(__file__).resolve().parent
 POLICY_CSV = HERE / "data" / "company_policies.csv"
 INDEX_JSON = HERE / "data" / "policy_index.json"
 
-GEN_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-2.5-flash-lite"]
+GEN_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-flash-lite-latest"]
 EMBED_MODEL = "gemini-embedding-001"
 EMBED_DIM = 768
 TOP_K = 3
 NO_POLICY = "NONE"
 # USD per 1M tokens (paid tier) - https://ai.google.dev/gemini-api/docs/pricing, checked 27 Oct 2026
 PRICES = {"gemini-3.1-flash-lite": (0.25, 1.50), "gemini-3.5-flash-lite": (0.30, 2.50),
-          "gemini-2.5-flash-lite": (0.10, 0.40)}
+          "gemini-flash-lite-latest": (0.10, 0.40)}
 
 
 @dataclass
